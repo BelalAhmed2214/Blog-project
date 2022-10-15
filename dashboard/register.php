@@ -1,15 +1,35 @@
 <?php
-    if (isset($_POST['name']))
+    include("lib/user.php");
+    if (isset($_POST['Name']))
     {
-        $name=$_POST['name'];
-        $email=$_POST['email'];
-        $password=$_POST['password'];
-        //first connect to database
-        $conn=mysqli_connect("localhost","root","","proone");
-       //second
-       $sql="INSERT INTO `user` (`name`,`email`,`password`) VALUES ('$name','$email','$password')";
-       mysqli_query($conn,$sql);
+      //Array to store the required fields
+        $errors=[];
+        $name=$_POST['Name'];
+        $email=$_POST['Email'];
+        $password=$_POST['Password'];
+        if (empty($name))
+        {
+          $errors[]= "Name is Required";
+        }
+        if (empty($email))
+        {
+          $errors[]= "Email is Required";
+        }
+        if (empty($password))
+        {
+          $errors[]= "Password is Required";
+        }
+
+        // print_r($errors);
+        // die;
+        if (!empty($name)&&!empty($email)&&!empty($password))
+        {
+          AddNewUser($name,$email,$password);
+        }
+        
     }
+    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,11 +55,22 @@
 
   <div class="card">
     <div class="card-body register-card-body">
-      <p class="login-box-msg">Register a new membership</p>
-
+      <!-- <p class="login-box-msg">Register a new membership</p> -->
+      <!--Alert icon when an error Appear -->
+      <?php if(!empty($errors)):?>
+        <div class="alert alert-danger alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                  <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                  <ul>
+                    <?php foreach($errors as $e): ?>
+                    <li> <?php echo $e; ?> </li>
+                    <?php endforeach; ?>
+                  <ul>
+        </div>
+      <?php endif; ?>
       <form action="register.php" method="post">
         <div class="input-group mb-3">
-          <input type="text" name="name" class="form-control" placeholder="Full name">
+          <input type="text" name="Name" class="form-control" placeholder="Full name">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -47,7 +78,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="email" name="email" class="form-control" placeholder="Email">
+          <input type="text" name="Email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -55,7 +86,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" name="password" class="form-control" placeholder="Password">
+          <input type="password" name="Password" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
